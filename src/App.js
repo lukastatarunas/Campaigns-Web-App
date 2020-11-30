@@ -1,25 +1,70 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import MomentUtils from '@date-io/moment';
+import * as moment from 'moment';
+
+import DateRange from './components/daterange/DateRange';
+import SearchForm from './components/searchform/SearchForm';
+import List from './components/list/List';
+
+import { changeSearchForm } from './redux/searchform/searchform.actions';
+import { requestUsers } from './redux/users/users.actions';
+import { requestCampaigns } from './redux/campaigns/campaigns.actions';
+
+import { Header } from './styles';
+import { unknownUser, dateFormat } from './constants';
+
+const App = () => {
+    const [startDate, setStartDate] = useState(null);
+    const [endDate, setEndDate] = useState(null);
+
+    const searchForm = useSelector((state) => state.searchform.searchForm);
+    const isPending = useSelector((state) => state.campaigns.isPending);
+    const users = useSelector((state) => state.users.users);
+    const campaigns = useSelector((state) => state.campaigns.campaigns);
+
+    const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(requestUsers());
+        dispatch(requestCampaigns());
+    }, [dispatch]);
+
+    const handleSearchForm = (event) => dispatch(changeSearchForm(event.target.value));
+
+    const data = campaigns.map((item) => Object.assign({}, item, users[item.userId]));
+
+    let filteredData = data.filter((item) => {
+        if (!item.name) {
+            item.name = unknownUser;
+        }
+        return item.name.toLowerCase().includes(searchForm.toLowerCase());
+    });
+
+    filteredData = filteredData.filter((item) => {
+        return moment(item.startDate, dateFormat).toDate() < moment(item.endDate, dateFormat).toDate();
+    });
+
+    if (startDate && endDate) {
+        filteredData = filteredData.filter((item) => {
+            return (
+                (moment(item.startDate, dateFormat).toDate() > startDate._d && moment(item.startDate, dateFormat).toDate() < endDate._d) ||
+                (moment(item.endDate, dateFormat).toDate() > startDate._d && moment(item.endDate, dateFormat).toDate() < endDate._d)
+            );
+        });
+    }
+
+    return (
+        <MuiPickersUtilsProvider utils={MomentUtils}>
+            <Header>
+                <DateRange startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} />
+                <SearchForm handleSearchForm={handleSearchForm} />
+            </Header>
+            <List isPending={isPending} data={filteredData} />
+        </MuiPickersUtilsProvider>
+    );
+};
 
 export default App;
