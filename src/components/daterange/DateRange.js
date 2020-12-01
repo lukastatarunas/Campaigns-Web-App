@@ -3,13 +3,15 @@ import PropTypes from 'prop-types';
 
 import { DatePicker } from '@material-ui/pickers';
 
+import { startDateLabel, endDateLabel } from '../../constants';
+
 const DateRange = ({ startDate, endDate, setStartDate, setEndDate }) => {
     return (
         <Fragment>
-            <DatePicker autoOk label='Start-Date' clearable disableFuture value={startDate} onChange={setStartDate} />
+            <DatePicker autoOk label={startDateLabel} clearable disableFuture value={startDate} onChange={setStartDate} />
             <DatePicker
                 autoOk
-                label='End-Date'
+                label={endDateLabel}
                 clearable
                 disableFuture
                 value={endDate}

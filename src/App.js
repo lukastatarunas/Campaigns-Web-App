@@ -5,6 +5,7 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import MomentUtils from '@date-io/moment';
 import * as moment from 'moment';
 
+import TextArea from './components/textarea/TextArea';
 import DateRange from './components/daterange/DateRange';
 import SearchForm from './components/searchform/SearchForm';
 import List from './components/list/List';
@@ -19,6 +20,8 @@ import { unknownUser, dateFormat } from './constants';
 const App = () => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
+    const [jsonData, setJsonData] = useState([]);
+    const [updateComponent, setUpdateComponent] = useState(false);
 
     const searchForm = useSelector((state) => state.searchform.searchForm);
     const isPending = useSelector((state) => state.campaigns.isPending);
@@ -32,7 +35,11 @@ const App = () => {
         dispatch(requestCampaigns());
     }, [dispatch]);
 
+    const handleTextArea = (event) => setJsonData(event.target.value);
+
     const handleSearchForm = (event) => dispatch(changeSearchForm(event.target.value));
+
+    const addCampaigns = () => setUpdateComponent(!updateComponent);
 
     const data = campaigns.map((item) => Object.assign({}, item, users[item.userId]));
 
@@ -56,8 +63,13 @@ const App = () => {
         });
     }
 
+    if (updateComponent) {
+        JSON.parse(jsonData).map((item) => filteredData.push(item));
+    }
+
     return (
         <MuiPickersUtilsProvider utils={MomentUtils}>
+            <TextArea handleTextArea={handleTextArea} addCampaigns={addCampaigns} />
             <Header>
                 <DateRange startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} />
                 <SearchForm handleSearchForm={handleSearchForm} />
