@@ -7,3 +7,4 @@ export const startDateLabel = 'Start-Date';
 export const endDateLabel = 'End-Date';
 export const off = 'off';
 export const searchByName = 'Search by name';
+export const small = 'small';

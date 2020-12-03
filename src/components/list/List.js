@@ -12,7 +12,7 @@ import { green, red } from '@material-ui/core/colors';
 import * as moment from 'moment';
 
 import { override, useStyles, LoaderContainer, StyledTableCell, StyledTableRow, IconContainer } from './styles';
-import { dateFormat } from '../../constants';
+import { dateFormat, small } from '../../constants';
 
 const List = ({ isPending, data }) => {
     const classes = useStyles();
@@ -49,12 +49,12 @@ const List = ({ isPending, data }) => {
                                         {new Date() >= moment(item.startDate, dateFormat).toDate() &&
                                         new Date() <= moment(item.endDate, dateFormat).toDate() ? (
                                             <IconContainer>
-                                                <FiberManualRecordIcon style={{ color: green[500] }} fontSize='small' />
+                                                <FiberManualRecordIcon style={{ color: green[500] }} fontSize={small} />
                                                 <span>Active</span>
                                             </IconContainer>
                                         ) : (
                                             <IconContainer>
-                                                <FiberManualRecordIcon style={{ color: red[500] }} fontSize='small' />
+                                                <FiberManualRecordIcon style={{ color: red[500] }} fontSize={small} />
                                                 <span>Inactive</span>
                                             </IconContainer>
                                         )}
