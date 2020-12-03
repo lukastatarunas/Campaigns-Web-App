@@ -20,7 +20,7 @@ import { unknownUser, dateFormat } from './constants';
 const App = () => {
     const [startDate, setStartDate] = useState(null);
     const [endDate, setEndDate] = useState(null);
-    const [jsonData, setJsonData] = useState([]);
+    const [jsonData, setJsonData] = useState(null);
     const [updateComponent, setUpdateComponent] = useState(false);
 
     const searchForm = useSelector((state) => state.searchform.searchForm);
@@ -43,15 +43,21 @@ const App = () => {
 
     const data = campaigns.map((item) => Object.assign({}, item, users[item.userId]));
 
-    let filteredData = data.filter((item) => {
+    if (updateComponent) {
+        JSON.parse(jsonData).map((item) => data.push(item));
+    }
+
+    let filteredData;
+
+    filteredData = data.filter((item) => {
+        return moment(item.startDate, dateFormat).toDate() < moment(item.endDate, dateFormat).toDate();
+    });
+
+    filteredData = data.filter((item) => {
         if (!item.name) {
             item.name = unknownUser;
         }
         return item.name.toLowerCase().includes(searchForm.toLowerCase());
-    });
-
-    filteredData = filteredData.filter((item) => {
-        return moment(item.startDate, dateFormat).toDate() < moment(item.endDate, dateFormat).toDate();
     });
 
     if (startDate && endDate) {
@@ -61,10 +67,6 @@ const App = () => {
                 (moment(item.endDate, dateFormat).toDate() > startDate._d && moment(item.endDate, dateFormat).toDate() < endDate._d)
             );
         });
-    }
-
-    if (updateComponent) {
-        JSON.parse(jsonData).map((item) => filteredData.push(item));
     }
 
     return (
