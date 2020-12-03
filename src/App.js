@@ -43,17 +43,13 @@ const App = () => {
 
     const data = campaigns.map((item) => Object.assign({}, item, users[item.userId]));
 
-    if (updateComponent) {
-        JSON.parse(jsonData).map((item) => data.push(item));
-    }
+    updateComponent && JSON.parse(jsonData).map((item) => data.push(item));
 
-    let filteredData;
-
-    filteredData = data.filter((item) => {
+    let filteredData = data.filter((item) => {
         return moment(item.startDate, dateFormat).toDate() < moment(item.endDate, dateFormat).toDate();
     });
 
-    filteredData = data.filter((item) => {
+    filteredData = filteredData.filter((item) => {
         if (!item.name) {
             item.name = unknownUser;
         }
