@@ -67,7 +67,7 @@ const App = () => {
 
     return (
         <MuiPickersUtilsProvider utils={MomentUtils}>
-            <TextArea handleTextArea={handleTextArea} addCampaigns={addCampaigns} jsonData={jsonData} />
+            {/* <TextArea handleTextArea={handleTextArea} addCampaigns={addCampaigns} jsonData={jsonData} /> */}
             <Header>
                 <DateRange startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} />
                 <SearchForm handleSearchForm={handleSearchForm} />
